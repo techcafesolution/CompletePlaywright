@@ -21,5 +21,5 @@ const locators=await page.$$("//select[@id='country']//option");
 for(const locator of locators){
     let option=await locator.textContent();
     console.log(option);
-};
+ };
 });
