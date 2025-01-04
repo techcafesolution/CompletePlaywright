@@ -21,4 +21,5 @@ test('TestSoftAssertion',async ({page})=>{
     await expect.soft(page.locator('#name')).toHaveValue('Ranjita');
     //9. To have count
     await expect.soft(page.locator("//select[@id='country']//option")).toHaveCount(10);
+    
 });
