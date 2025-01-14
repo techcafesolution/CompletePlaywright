@@ -31,6 +31,4 @@ for(const element of elements){
     }
 }
 await page.waitForTimeout(5000);
-
-
 });
