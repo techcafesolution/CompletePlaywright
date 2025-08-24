@@ -1,4 +1,5 @@
 const{test,expect,chromium}=require('@playwright/test');
+const { setTimeout } = require('timers/promises');
 test('MultiplePages',async ()=>{
     const browser=await chromium.launch();
     const context=await browser.newContext();
@@ -37,10 +38,12 @@ test.only('DemoPages',async ()=>{
     const promisePage=context.waitForEvent('page');
     await page.getByRole('link',{name:'OrangeHRM, Inc'}).click();
     await page.waitForTimeout(2000);
-    let allPages=context.pages();
+    // let allPages=context.pages();
+    // console.log('Number Of pages are-->'+allPages.length);
+    const newPage=await handleMultiPage(page);
+    //allPages=context.pages();
     console.log('Number Of pages are-->'+allPages.length);
-    const newPage=await promisePage;
-    await expect(newPage).toHaveTitle('Human Resources Management Software | OrangeHRM');
+    await expect(newPage).toHaveTitle('Human Resources Management Software | OrangeHRM HR Software');
 
     await newPage.getByPlaceholder('Enter your email address here').fill('example123@email.com');
     await newPage.waitForTimeout(2000);
@@ -55,3 +58,21 @@ test.only('DemoPages',async ()=>{
     await page.close();
 
 });
+
+async function handleMultiPage(page){
+    const [newPage]=await Promise.all([
+        page.waitForEvent('popup',{setTimeout:10000})
+    ]);
+
+    await newPage.waitForLoadState('domcontentloaded');
+    return newPage;
+}
+
+async function handleMultiWindows(context){
+    const [newPage]=await Promise.all([
+        context.waitForEvent('page', {setTimeout:10000})
+    ]);
+    await newPage.waitForLoadState('domcontentloaded');
+    return newPage;
+}
+

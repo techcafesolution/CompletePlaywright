@@ -27,7 +27,7 @@ test('CreateTwoPages', async ()=>{
 
 });
 
-test.only('ShiwtchPage',async ()=>{
+test.only('SwitchPage',async ()=>{
    
     const browser=await chromium.launch();
     const context=await browser.newContext();
@@ -36,12 +36,21 @@ test.only('ShiwtchPage',async ()=>{
     await page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
     await expect(page).toHaveTitle('OrangeHRM');
 
-    const newPage=context.waitForEvent('page');
+    
     await page.getByRole('link',{name:'OrangeHRM, Inc'}).click();
+    const newPage=await handleNewPage(page);
     const page1=await newPage;
-    await expect(page1).toHaveTitle('Human Resources Management Software | OrangeHRM');
+    await expect(page1).toHaveTitle('Human Resources Management Software | OrangeHRM HR Software');
     await page1.getByPlaceholder('Enter your email address here').fill('sanjeebavana@gmail.com');
     await page1.waitForTimeout(3000);
     await page1.close();
     await page.waitForTimeout(3000);
 });
+
+async function handleNewPage(page){
+    const [newPages]=await Promise.all([
+        page.waitForEvent('popup', {setTimeout:10000})
+    ]);
+    await newPages.waitForLoadState('domcontentloaded');
+    return newPages;
+}
